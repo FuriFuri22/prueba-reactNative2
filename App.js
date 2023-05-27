@@ -2,7 +2,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native'
 import HomeView from './src/views/HomeView';
-import ListPokemonsView from './src/views/ListPokemonsView';
+import ListPokemonViewCo from './src/views/ListPokemonViewCo';
 import { StatusBar } from 'expo-status-bar';
 
 export default function App() {
@@ -14,7 +14,7 @@ export default function App() {
     <NavigationContainer >
       <Stack.Navigator  initialRouteName="Home">
        <Stack.Screen  name="Home" component={HomeView}/>
-       <Stack.Screen name="lista" component={ListPokemonsView}/>
+       <Stack.Screen name="lista" component={ListPokemonViewCo}/>
       </Stack.Navigator>
     </NavigationContainer>
     <StatusBar style="auto" />

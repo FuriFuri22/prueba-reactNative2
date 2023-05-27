@@ -14,8 +14,6 @@ export default ButtonTitle
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'red',
-    width: '155px',
-    height: '55px',
     borderRadius: 10,
     alignItems: 'center',
     padding: 15,
