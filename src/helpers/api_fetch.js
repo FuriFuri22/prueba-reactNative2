@@ -7,13 +7,17 @@ const api_fetch = async () => {
     const responseJson = await url.json();
 
     return {
+      id: responseJson.id ,
       nombre: responseJson.name,
       imagen: responseJson.sprites.other["official-artwork"].front_default,
       tipo:[
          responseJson.types[0],
-        (responseJson.types[1])? responseJson.types[1]:{ type: { name: 'sintipo' } }
+        (responseJson.types[1])
+        ? responseJson.types[1]
+        :{ type: { name: 'sintipo' } }
         // ...
-      ] 
+      ] ,
+      isActive: true
     };
   });
 
@@ -23,34 +27,6 @@ const api_fetch = async () => {
 
 export default api_fetch;
 
-
-
-
-/*const api_fetch = async()=>{
-  
-	const response= await fetch("https://pokeapi.co/api/v2/pokemon/?limit=20&offset=20")//Se hace una peticion get y se espera la respuesta de la api 
-
-    const resJson = response.json()//Interpretamos el json
-
-    const resol = []// Se declara un array para almacenar la respuesta de la api de  los datos que requerimos
-
-     resJson.then(async res=> {
-      for(const x of res.results){
-        
-        const url = await fetch(x.url)
-        
-        const responseJson = url.json()
-        
-        responseJson.then(resp => resol.push({
-          nombre: resp.name, 
-          imagen: resp.sprites.other["official-artwork"].front_default
-        }))
-      }
-    })
-    return resol
-}
-
-export default api_fetch*/
 
 
 

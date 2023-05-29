@@ -1,55 +1,37 @@
 import { useEffect, useState } from 'react';
-import {TouchableOpacity, FlatList, StyleSheet, View, Text} from 'react-native';
+import { TouchableOpacity, FlatList, StyleSheet, View, Text } from 'react-native';
 import api_fetch from '../helpers/api_fetch';
-import Card from '../components/Card';
+import tiposList from '../helpers/typesPokes';
 import { Fondo } from '../components/Fondo';
-
+import { Renderizado } from '../components/RenderCards';
+import pokeballs from '../images/pokeballs.jpg';
 
 export default function ListPokemonViewCo() {
-  const [pokemon, setPokemon]= useState([]);
+  const [pokemon, setPokemon] = useState([]);
   const [filteredPokemons, setFilteredPokemons] = useState([]);
   const [selectedType, setSelectedType] = useState('');
 
-  const renderizado = ()=>{
-    return <FlatList 
-    data={filteredPokemons} 
-    renderItem={({item})=>(
-      <Card uri={{uri:item.imagen}} nombre={item.nombre}/> )}/>
-  }
+  const fondo = () => {
+    const tipoSeleccionado = tiposList.find((tipo) => tipo.tipo === selectedType);
+    return tipoSeleccionado ? tipoSeleccionado.fondo : pokeballs;
+  };
 
-  const tiposList = [
-    'normal',
-    'fighting',
-    'flying',
-    'poison',
-    'ground',
-    'rock',
-    'bug',
-    'ghost',
-    'steel',
-    'fire',
-    'water',
-    'grass',
-    'electric',
-    'psychic',
-    'ice',
-    'dragon',
-    'dark',
-    'fairy'
-  ]
+  const renderTipo = () => (
+    <FlatList
+      data={tiposList}
+      renderItem={({ item }) => renderTypeButton(item)}
+      keyExtractor={(item) => item.tipo}
+    />
+  );
 
-   const renderTipo = ()=><FlatList
-    data={tiposList}
-    renderItem={({item})=>renderTypeButton(item)}/>
-
-  useEffect(()=>{
-    (async()=>{
+  useEffect(() => {
+    (async () => {
       const data = await api_fetch();
       setPokemon(data);
       setFilteredPokemons(data);
-    })()//una funcion autoconvocada asincronica 
-  },[]);
-  
+    })();
+  }, []);
+
   const filterPokemonsByType = (type) => {
     if (type === selectedType) {
       // Si se selecciona el mismo tipo, muestra todos los Pokémon
@@ -64,64 +46,82 @@ export default function ListPokemonViewCo() {
       setSelectedType(type);
     }
   };
-    const renderTypeButton = (type) => (
-        <TouchableOpacity
-          style={[
-            styles.typeButton,
-            selectedType === type && styles.selectedTypeButton,
-          ]}
-          onPress={() => filterPokemonsByType(type)}
-        >
-          <Text style={styles.typeButtonText}>{type}</Text>
-        </TouchableOpacity>
-      );
+
+  const eliminar = (id) => {
+    const pokemons = filteredPokemons.filter((poke) => poke.id !== id);
+    setFilteredPokemons(pokemons);
+  };
+
+  const renderTypeButton = (type) => (
+    <TouchableOpacity
+      style={[
+        styles.typeButton,
+        selectedType === type.tipo && styles.selectedTypeButton,
+      ]}
+      onPress={() => filterPokemonsByType(type.tipo)}
+    >
+      <Text
+        style={[
+          selectedType === type.tipo ? styles.typeButtonTextNext : styles.typeButtonText,
+        ]}
+      >
+        {type.nombre}
+      </Text>
+    </TouchableOpacity>
+  );
 
   return (
-    <Fondo url={require('../images/pokeballs.jpg')}>
-    <View style={styles.container}>
-      <View style={styles.contentContainer}>
-        <View style={styles.typeButtonsContainer}>
-          {renderTipo()}
-        </View>
-        <View style={styles.renderContainer}>
-          {renderizado()}
+    <Fondo url={fondo()}>
+      <View style={styles.container}>
+        <View style={styles.contentContainer}>
+          <View style={styles.typeButtonsContainer}>{renderTipo()}</View>
+          <View style={styles.renderContainer}>
+            <Renderizado 
+            theData={filteredPokemons} 
+            colors={selectedType} 
+            onPressEliminar={eliminar} />
+          </View>
         </View>
       </View>
-    </View>
-  </Fondo>
-   
+    </Fondo>
   );
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    typeButtonsContainer:{
-      flex: 1,
-      flexDirection: 'column'
-    },
-    typeButton: {
-      paddingHorizontal: 10,
-      paddingVertical: 8,
-      borderRadius: 15,
-      marginHorizontal: 2,
-      backgroundColor: 'pink',
-    },
-    selectedTypeButton: {
-      backgroundColor: 'blue',
-    },
-    typeButtonText: {
-      color: 'white',
-    },
-    contentContainer: {
-        flex: 1,
-        flexDirection: 'row',
-      },
-    renderContainer: {
-        flex: 3,
-        flexDirection:'column',
-    }
-  });
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  typeButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 15,
+    marginHorizontal: 2,
+    backgroundColor: 'red',
+  },
+  selectedTypeButton: {
+    backgroundColor: 'white',
+  },
+  typeButtonText: {
+    color: 'white',
+  },
+  typeButtonTextNext: {
+    color: 'red',
+  },
+  contentContainer: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  renderContainer: {
+    flex: 3,
+    justifyContent: 'flex-end',
+    flexDirection: 'column',
+  },
+  typeButtonsContainer: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    flexDirection: 'column',
+  },
+});
