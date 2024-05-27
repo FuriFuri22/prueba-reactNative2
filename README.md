@@ -8,7 +8,7 @@ npm install
 
 npx expo install @react-native-picker/picker@2.4.8 expo-image@~1.0.2 react-native@0.71.143.
 
- Inicia el proyecto:
+3. Inicia el proyecto:
 
 npm start
 
